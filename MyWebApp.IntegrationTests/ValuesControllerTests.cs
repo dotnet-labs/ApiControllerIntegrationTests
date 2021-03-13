@@ -8,18 +8,11 @@ namespace MyWebApp.IntegrationTests
     [TestClass]
     public class ValuesControllerTests
     {
-        private static WebApplicationFactory<Startup> _factory;
-
-        [ClassInitialize]
-        public static void ClassInit(TestContext testContext)
-        {
-            _factory = new WebApplicationFactory<Startup>();
-        }
-
         [TestMethod]
         public async Task ShouldReturnSuccessResponse()
         {
-            var client = _factory.CreateClient();
+            using var factory = new WebApplicationFactory<Startup>();
+            var client = factory.CreateDefaultClient();
             var response = await client.GetAsync("api/values");
 
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -27,12 +20,6 @@ namespace MyWebApp.IntegrationTests
 
             var json = await response.Content.ReadAsStringAsync();
             Assert.AreEqual("[\"value1\",\"value2\"]", json);
-        }
-
-        [ClassCleanup]
-        public static void ClassCleanup()
-        {
-            _factory.Dispose();
         }
     }
 }
