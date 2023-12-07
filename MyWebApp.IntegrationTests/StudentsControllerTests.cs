@@ -1,6 +1,4 @@
-﻿
-
-using System.Text;
+﻿using System.Text;
 
 namespace MyWebApp.IntegrationTests;
 
@@ -81,7 +79,7 @@ public class StudentsControllerTests
         var a = new MyRequest
         {
             Id = 12,
-            EmailNotificationToAddresses = new[] { "test" }
+            EmailNotificationToAddresses = ["test"]
         };
         var response = await client.PostAsJsonAsync("api/students/", a);
 
@@ -100,13 +98,13 @@ public class StudentsControllerTests
         await using var factory = new WebApplicationFactory<Startup>();
         using var client = factory.CreateClient();
 
-        var response = await client.PostAsync("api/students/", new StringContent(@"{""id"":12,""pickupDateTime"":""2023-03-10T15:00:00.000Z""}", Encoding.UTF8, "application/json"));
+        var response = await client.PostAsync("api/students/", new StringContent("""{"id":12,"pickupDateTime":"2023-03-10T15:00:00.000Z"}""", Encoding.UTF8, "application/json"));
 
         Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         Assert.AreEqual("application/json; charset=utf-8", response.Content.Headers.ContentType?.ToString());
 
         var result = await response.Content.ReadAsStringAsync();
-        Assert.AreEqual("{\"id\":12,\"tryMe\":false,\"tryMe2\":true,\"pickupDateTime\":\"2023-03-10T09:00:00-06:00\",\"emailNotificationToAddresses\":[\"VPFO-BO-AS_Processes@iowa.uiowa.edu\"]}", result);
+        Assert.AreEqual("{\"id\":12,\"tryMe\":false,\"tryMe2\":true,\"pickupDateTime\":\"2023-03-10T09:00:00-06:00\",\"emailNotificationToAddresses\":[\"es@uiowa.edu\"]}", result);
     }
 }
 

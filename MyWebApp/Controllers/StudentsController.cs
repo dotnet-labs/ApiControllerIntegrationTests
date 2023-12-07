@@ -2,24 +2,13 @@
 
 [ApiController, Produces("application/json")]
 [Route("api/[controller]")]
-public class StudentsController : ControllerBase
+public class StudentsController(ILogger<StudentsController> logger) : ControllerBase
 {
-    private readonly ILogger<StudentsController> _logger;
-    private readonly IStudentsService _studentsService;
-    private readonly IHostEnvironment _environment;
-
-    public StudentsController(ILogger<StudentsController> logger, IStudentsService studentsService, IHostEnvironment environment)
-    {
-        _logger = logger;
-        _studentsService = studentsService;
-        _environment = environment;
-    }
-
     [HttpGet("{id:int}/name")]
-    public ActionResult GetStudentName(int id)
+    public ActionResult GetStudentName(int id, [FromServices] IHostEnvironment environment, [FromServices] IStudentsService studentsService)
     {
-        _logger.LogInformation($"Environment: {_environment.EnvironmentName}");
-        var name = _studentsService.GetStudentNameById(id);
+        logger.LogInformation("Environment: {environmentName}", environment.EnvironmentName);
+        var name = studentsService.GetStudentNameById(id);
         if (string.IsNullOrWhiteSpace(name))
         {
             return NoContent();
@@ -31,7 +20,7 @@ public class StudentsController : ControllerBase
     [HttpPost("")]
     public ActionResult Test([FromBody] MyRequest request)
     {
-        _logger.LogInformation("{@request}", request);
+        logger.LogInformation("{@request}", request);
         request.PickupDateTime = request.PickupDateTime.Kind != DateTimeKind.Local ? request.PickupDateTime.ToLocalTime() : request.PickupDateTime;
         return Ok(request);
     }
@@ -57,5 +46,5 @@ public class MyRequest
     public bool TryMe { get; set; } = false;
     public bool TryMe2 { get; set; } = true;
     public DateTime PickupDateTime { get; set; }
-    public string[] EmailNotificationToAddresses { get; set; } = { "VPFO-BO-AS_Processes@iowa.uiowa.edu" };
+    public string[] EmailNotificationToAddresses { get; set; } = { "es@uiowa.edu" };
 }

@@ -28,7 +28,8 @@ public class WeatherForecastControllerTests
         Assert.AreEqual("application/json; charset=utf-8", response.Content.Headers.ContentType?.ToString());
 
         var json = await response.Content.ReadAsStringAsync();
-        var result = JsonSerializer.Deserialize<WeatherForecast[]>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var result = JsonSerializer.Deserialize<WeatherForecast[]>(json, options);
         Assert.AreEqual(5, result?.Length);
     }
 
